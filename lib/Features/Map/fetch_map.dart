@@ -13,6 +13,7 @@ class FetchMap extends StatefulWidget {
 
 class _FetchMapState extends State<FetchMap> {
   final mapController = Get.put(MapController());
+  bool isError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +45,13 @@ class _FetchMapState extends State<FetchMap> {
                 color: Colors.white, fontSize: 18.0, fontFamily: 'Raleway'),
           ),
         ),
-      body: Obx(
-        () => GoogleMap(
+      body: isError
+          ? Center(
+              child: Text('An error occurred while loading the map.'),
+            )
+          : Obx(
+        () {  try {
+          return GoogleMap(
           onMapCreated: (controller) {
             mapController.mapController = controller;
           },
@@ -87,8 +93,15 @@ class _FetchMapState extends State<FetchMap> {
               ),
             );
           }).toSet(),
-        ),
-      ),
+        );
+        }catch (error) {
+                  isError = true;
+                  return Center(
+                    child: Text('An error occurred: $error'),
+                  );
+                }
+        },
+          ),
     );
   }
 }
